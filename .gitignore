@@ -1,0 +1,29 @@
+# Bytecode do Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Configurações do VSCode
+.vscode/
+
+# Ambientes virtuais
+venv/
+env/
+.venv/
+
+# Arquivos de logs
+*.log
+ai_learning_log.txt
+simulation_log.txt
+
+# Arquivos de saída da simulação
+*.csv
+*.png
+
+# Pesos treinados da RN (se quiser treinar novamente)
+*.pt
+*.pth
+
+# Sistema operacional
+.DS_Store
+Thumbs.db

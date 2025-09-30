@@ -58,6 +58,11 @@ Para rodar a simulação sem AG/RN (dummy):
 python -m src.sim.dummysimulator
 ```
 
+Para rodar a simulação interativa em Streamlit:
+```bash
+streamlit run app.py
+```
+
 ## Resultados
 
 - **Logs detalhados da simulação**: `simulation_log.txt`  
@@ -83,6 +88,7 @@ python -m src.sim.dummysimulator
 - `src/genetic/` → Implementação do Algoritmo Genético (AG)  
 - `src/nn/` → Rede Neural (RN) para previsão de falhas  
 - `src/config.py` → Configurações gerais da simulação (dias, custos, durações de falha, taxas, etc.)
+- `app.py` → Aplicativo interativo em Streamlit
 
 ## Bibliotecas Utilizadas
 
@@ -90,9 +96,13 @@ python -m src.sim.dummysimulator
 - `csv` → Para exportação de dados em CSV  
 - `random` → Para simular eventos aleatórios  
 - `time` → Controle de tempo de simulação (opcional)
+- `streamlit` → Para o aplicativo interativo
 
 ## Perspectivas Futuras
 
-- Criar um **aplicativo interativo** para visualizar a simulação em tempo real.  
-- Permitir que o usuário **altere parâmetros da simulação dinamicamente**, como taxa de falhas, custos ou número de máquinas.  
-- Integrar visualizações gráficas em **tempo real**, mostrando lucro diário, VPL e decisões do AG/RN conforme a simulação acontece.
+- Desenvolver um **aplicativo interativo** usando Streamlit ou outra interface gráfica para visualizar a simulação em tempo real.  
+- Permitir que o usuário **configure parâmetros da simulação dinamicamente**, como taxa de falhas, custos de manutenção ou número de máquinas.  
+- Integrar **gráficos atualizados em tempo real**, mostrando lucro diário, VPL e decisões tomadas pelo AG/RN à medida que a simulação ocorre.  
+- Possibilitar **comparações entre diferentes estratégias** (com AG/RN vs. dummy) para análise de desempenho e eficiência das decisões automatizadas.  
+- Explorar **exportação de relatórios e gráficos** diretamente pelo aplicativo, facilitando documentação e apresentação acadêmica.
+

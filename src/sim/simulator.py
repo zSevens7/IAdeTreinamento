@@ -6,7 +6,13 @@ from ..config import SIM_DAYS, SECONDS_PER_DAY
 from ..config import DUR_SIMPLE, DUR_GRAVE, DUR_TOTAL
 from ..config import BASE_FAIL_RATE, AGE_FAIL_FACTOR, MAX_FAIL_RATE
 from ..config import COST_REPAIR_SIMPLE, COST_REPAIR_GRAVE, COST_REPAIR_TOTAL
-from .logger import save_logs, save_machines_csv, plot_profit, plot_machine_performance
+from .logger import (
+    save_logs,
+    save_machines_csv,
+    plot_profit,
+    plot_machine_performance,
+    plot_vpl,  # <-- adicionado
+)
 from src.genetic.genetic_algorithm import run_genetic  # AG
 from src.nn.rede_neural import predict_maintenance  # RN
 
@@ -29,8 +35,15 @@ class Simulator:
         for m in self.machines:
             m.current_day = self.day
 
-        # Executa AG que já considera a RN
-        best_strategy = run_genetic(self.machines, day_log, self.day)
+        # Define estratégia: RN só atua depois de 1 ano (365 dias)
+        if self.day >= 365:
+            best_strategy = run_genetic(self.machines, day_log, self.day)
+        else:
+            # Antes de 1 ano, todas as máquinas operam sem considerar RN
+            class DummyStrategy:
+                def __init__(self, machines):
+                    self.genes = {m.id: True for m in machines}  # todas operando
+            best_strategy = DummyStrategy(self.machines)
 
         for m in self.machines:
             day_profit = 0
@@ -98,14 +111,16 @@ class Simulator:
         for log in self.logs[-1][2]:
             print(log)
 
+        # Salva logs e CSV
         save_logs(self.logs, "simulation_log.txt")
-        # Previne KeyError criando todas as chaves no dict antes
         save_machines_csv(self.logs, "machines_summary.csv", num_machines=len(self.machines))
+
+        # Gera gráficos
         plot_profit(self.logs, "profit_graph.png")
         plot_machine_performance(self.logs, filename="machines_performance.png")
-
+        plot_vpl(self.logs, discount_rate=0.0, filename="vpl_graph.png")  # <-- VPL automático
 
 if __name__ == "__main__":
     sim = Simulator()
-    sim.run(days=390)  # simula 390 dias
+    sim.run(days=890)
     sim.report()

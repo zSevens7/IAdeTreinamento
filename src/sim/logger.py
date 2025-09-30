@@ -1,9 +1,9 @@
 import csv
 import matplotlib.pyplot as plt
+import pandas as pd
 
 # ===================== LOGS DETALHADOS =====================
 def save_logs(logs, filename="simulation_log.txt"):
-    """Salva todos os logs detalhados da simulação"""
     with open(filename, "w", encoding="utf-8") as f:
         for day, daily_profit, details in logs:
             f.write(f"Dia {day} -> Lucro líquido: {daily_profit}\n")
@@ -13,7 +13,6 @@ def save_logs(logs, filename="simulation_log.txt"):
 
 # ===================== RESUMO POR MÁQUINA =====================
 def save_machines_csv(logs, filename="machines_summary.csv", num_machines=10):
-    """Cria um CSV resumido das máquinas"""
     machines_data = {i: {"profit_total": 0, "simples": 0, "grave": 0, "total": 0, "preventiva": 0} 
                      for i in range(num_machines)}
 
@@ -55,26 +54,24 @@ def save_machines_csv(logs, filename="machines_summary.csv", num_machines=10):
             writer.writerow([mid, data["profit_total"], data["simples"],
                              data["grave"], data["total"], data["preventiva"]])
 
+    return pd.DataFrame.from_dict(machines_data, orient='index')
+
 # ===================== GRÁFICOS =====================
-def plot_profit(logs, filename="profit_graph.png"):
-    """Gráfico do lucro líquido diário"""
+def plot_profit(logs):
     days = [day for day, _, _ in logs]
     profits = [profit for _, profit, _ in logs]
-
-    plt.figure(figsize=(12,6))
-    plt.plot(days, profits, marker='o', linestyle='-', color='blue', label="Lucro Líquido")
-    plt.title("Lucro Líquido Diário")
-    plt.xlabel("Dia")
-    plt.ylabel("Lucro Líquido")
-    plt.grid(True, linestyle='--', alpha=0.6)
-    plt.axhline(0, color='black', linewidth=1)
-    plt.legend()
+    fig, ax = plt.subplots(figsize=(12,6))
+    ax.plot(days, profits, marker='o', linestyle='-', color='blue', label="Lucro Líquido")
+    ax.set_title("Lucro Líquido Diário")
+    ax.set_xlabel("Dia")
+    ax.set_ylabel("Lucro Líquido")
+    ax.grid(True, linestyle='--', alpha=0.6)
+    ax.axhline(0, color='black', linewidth=1)
+    ax.legend()
     plt.tight_layout()
-    plt.savefig(filename)
-    plt.show()
+    return fig
 
-def plot_machine_performance(logs, num_machines=10, filename="machines_performance.png"):
-    """Gráfico mostrando lucro líquido total por máquina"""
+def plot_machine_performance(logs, num_machines=10):
     machines_data = [0]*num_machines
     for _, _, day_logs in logs:
         for log in day_logs:
@@ -86,27 +83,19 @@ def plot_machine_performance(logs, num_machines=10, filename="machines_performan
                         machines_data[mid] += profit
                 except (IndexError, ValueError):
                     continue
-
-    plt.figure(figsize=(12,6))
-    plt.bar(range(len(machines_data)), machines_data, color='orange')
-    plt.title("Lucro Líquido Acumulado por Máquina")
-    plt.xlabel("Máquina")
-    plt.ylabel("Lucro Líquido Total")
-    plt.grid(axis='y', linestyle='--', alpha=0.6)
+    fig, ax = plt.subplots(figsize=(12,6))
+    ax.bar(range(len(machines_data)), machines_data, color='orange')
+    ax.set_title("Lucro Líquido Acumulado por Máquina")
+    ax.set_xlabel("Máquina")
+    ax.set_ylabel("Lucro Líquido Total")
+    ax.grid(axis='y', linestyle='--', alpha=0.6)
     plt.tight_layout()
-    plt.savefig(filename)
-    plt.show()
+    return fig
 
-def plot_vpl(logs, discount_rate=0.0, filename="vpl_graph.png"):
-    """
-    Gráfico de VPL diário.
-    - discount_rate: taxa de desconto diária (0 para sem desconto)
-    - positivo em verde, negativo em vermelho
-    """
+def plot_vpl(logs, discount_rate=0.0):
     days = []
     vpl_values = []
     vpl_acc = 0
-
     for day, daily_profit, _ in logs:
         if discount_rate > 0:
             vpl_acc += daily_profit / ((1 + discount_rate) ** day)
@@ -114,22 +103,19 @@ def plot_vpl(logs, discount_rate=0.0, filename="vpl_graph.png"):
             vpl_acc += daily_profit
         days.append(day)
         vpl_values.append(vpl_acc)
-
-    plt.figure(figsize=(12,6))
     colors = ['green' if val >= 0 else 'red' for val in vpl_values]
-    plt.bar(days, vpl_values, color=colors)
-    plt.title("VPL Diário Acumulado")
-    plt.xlabel("Dia")
-    plt.ylabel("VPL")
-    plt.grid(axis='y', linestyle='--', alpha=0.6)
-    plt.axhline(0, color='black', linewidth=1)
+    fig, ax = plt.subplots(figsize=(12,6))
+    ax.bar(days, vpl_values, color=colors)
+    ax.set_title("VPL Diário Acumulado")
+    ax.set_xlabel("Dia")
+    ax.set_ylabel("VPL")
+    ax.grid(axis='y', linestyle='--', alpha=0.6)
+    ax.axhline(0, color='black', linewidth=1)
     plt.tight_layout()
-    plt.savefig(filename)
-    plt.show()
+    return fig
 
 # ===================== LOG DA IA =====================
 def log_ai_action(day, machine_id, action, prediction=None, filename="ai_learning_log.txt"):
-    """Salva uma ação tomada pela IA (AG ou RN)"""
     with open(filename, "a", encoding="utf-8") as f:
         line = f"Dia {day} - Máquina {machine_id} -> Ação: {action}"
         if prediction is not None:

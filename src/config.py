@@ -5,13 +5,13 @@ NUM_MACHINES = 10       # número de máquinas na fábrica
 
 # Intervalos de valores para gerar máquinas variadas
 DURATION_RANGE = (8, 24)      # duração de operação em horas por dia
-COST_RANGE = (50, 300)        # custo diário de operação/manutenção preventiva
-PROFIT_RANGE = (80, 500)      # lucro diário quando operando
+COST_RANGE = (20, 80)        # custo diário de operação/manutenção preventiva
+PROFIT_RANGE = (150, 500)      # lucro diário quando operando
 
 # Custos de reparos (valores fixos)
-COST_REPAIR_SIMPLE = 500.0    # custo para consertar falha simples
-COST_REPAIR_GRAVE = 2000.0    # custo para consertar quando é falha grave
-COST_REPAIR_TOTAL = 10000.0   # custo para trocar a máquina quando é falha total
+COST_REPAIR_SIMPLE = 2000.0    # era 500
+COST_REPAIR_GRAVE = 8000.0     # era 2000  
+COST_REPAIR_TOTAL = 25000.0    # era 10000
 
 # Duração das falhas (em dias)
 DUR_SIMPLE = 2
